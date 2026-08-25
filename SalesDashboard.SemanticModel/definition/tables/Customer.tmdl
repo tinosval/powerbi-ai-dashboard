@@ -1,0 +1,63 @@
+table Customer
+	lineageTag: fe1d3f51-f0ec-4a4d-9524-b575ab35de07
+
+	column CUSTOMERNAME
+		lineageTag: df65fd45-c03b-491d-9e64-5192a7d031a1
+		isNameInferred
+		sourceColumn: Sales[CUSTOMERNAME]
+
+	column City
+		lineageTag: 951c593b-a94d-4db0-ba77-8245c8e9720a
+		isNameInferred
+		sourceColumn: [City]
+
+	column State
+		lineageTag: 3111898e-daea-4a43-a4a1-fe8ec7a37410
+		isNameInferred
+		sourceColumn: [State]
+
+	column 'Postal Code'
+		lineageTag: 2b1553a2-6439-428d-90e2-63b531bf47a8
+		isNameInferred
+		sourceColumn: [Postal Code]
+
+	column Country
+		lineageTag: 8f468acc-5c15-4a4a-be52-f5602ee494f1
+		isNameInferred
+		sourceColumn: [Country]
+
+	column Territory
+		lineageTag: cb249dea-ad6b-4baa-8a51-3af92cbf21ba
+		isNameInferred
+		sourceColumn: [Territory]
+
+	column 'Contact First Name'
+		lineageTag: 333c0c41-36e1-444c-82d7-0e1f8bf3383f
+		isNameInferred
+		sourceColumn: [Contact First Name]
+
+	column 'Contact Last Name'
+		lineageTag: e49afc0e-5f50-4cd0-ac54-37fd3b482276
+		isNameInferred
+		sourceColumn: [Contact Last Name]
+
+	column Phone
+		lineageTag: 337531ad-994b-4809-8d23-0e990f7208c1
+		isNameInferred
+		sourceColumn: [Phone]
+
+	partition Customer = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(
+				    VALUES(Sales[CUSTOMERNAME]),
+				    "City", CALCULATE(SELECTEDVALUE(Sales[CITY])),
+				    "State", CALCULATE(SELECTEDVALUE(Sales[STATE])),
+				    "Postal Code", CALCULATE(SELECTEDVALUE(Sales[POSTALCODE])),
+				    "Country", CALCULATE(SELECTEDVALUE(Sales[COUNTRY])),
+				    "Territory", CALCULATE(SELECTEDVALUE(Sales[TERRITORY])),
+				    "Contact First Name", CALCULATE(SELECTEDVALUE(Sales[CONTACTFIRSTNAME])),
+				    "Contact Last Name", CALCULATE(SELECTEDVALUE(Sales[CONTACTLASTNAME])),
+				    "Phone", CALCULATE(SELECTEDVALUE(Sales[PHONE]))
+				)
+

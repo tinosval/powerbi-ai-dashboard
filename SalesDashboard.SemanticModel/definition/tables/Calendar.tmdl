@@ -1,0 +1,59 @@
+table Calendar
+	lineageTag: 781cbbad-2038-4774-9894-ae5800358459
+	dataCategory: Time
+
+	column Date
+		isKey
+		lineageTag: d8c1d54a-3fe6-4863-a034-a1e3ada218e9
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Year
+		lineageTag: c4857a41-cc08-4591-a4fc-eec814b9471b
+		isNameInferred
+		sourceColumn: [Year]
+
+	column 'Month Number'
+		lineageTag: af706337-9177-4d37-9fc0-4c8e151e19f9
+		isNameInferred
+		sourceColumn: [Month Number]
+
+	column 'Month Name'
+		lineageTag: 19ac8458-cfac-472c-ac9c-191c6cd617b1
+		isNameInferred
+		sourceColumn: [Month Name]
+
+	column Quarter
+		lineageTag: bb5aa6e8-df54-4e0e-b083-00fe17d84afc
+		isNameInferred
+		sourceColumn: [Quarter]
+
+	column 'Year Quarter'
+		lineageTag: 90655360-2c86-4391-bb3b-0b03a9950b2c
+		isNameInferred
+		sourceColumn: [Year Quarter]
+
+	column 'Year Month'
+		lineageTag: b83750a4-2512-4bf6-944f-bdb32b7bc5c6
+		isNameInferred
+		sourceColumn: [Year Month]
+
+	column 'Year Month Number'
+		lineageTag: f7691530-f865-47cf-a739-043df4626a46
+		isNameInferred
+		sourceColumn: [Year Month Number]
+
+	partition Calendar = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(
+				    CALENDAR(DATE(2003,1,1), DATE(2005,12,31)),
+				    "Year", YEAR([Date]),
+				    "Month Number", MONTH([Date]),
+				    "Month Name", FORMAT([Date], "MMMM"),
+				    "Quarter", "Q" & FORMAT([Date], "Q"),
+				    "Year Quarter", FORMAT([Date], "YYYY") & " Q" & FORMAT([Date], "Q"),
+				    "Year Month", FORMAT([Date], "MMM YYYY"),
+				    "Year Month Number", YEAR([Date])*100 + MONTH([Date])
+				)
+

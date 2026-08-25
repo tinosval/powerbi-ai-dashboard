@@ -1,0 +1,27 @@
+table Product
+	lineageTag: 01949457-1a1b-4448-8fc4-e0350701193d
+
+	column PRODUCTCODE
+		lineageTag: e1124fe4-d697-4adf-b176-f8065a07ca35
+		isNameInferred
+		sourceColumn: Sales[PRODUCTCODE]
+
+	column 'Product Line'
+		lineageTag: 38390140-367e-4f1a-9bb5-1820372781fe
+		isNameInferred
+		sourceColumn: [Product Line]
+
+	column MSRP
+		lineageTag: a3a365fc-a604-42c2-b432-cf4d0ae1706f
+		isNameInferred
+		sourceColumn: [MSRP]
+
+	partition Product = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(
+				    VALUES(Sales[PRODUCTCODE]),
+				    "Product Line", CALCULATE(SELECTEDVALUE(Sales[PRODUCTLINE])),
+				    "MSRP", CALCULATE(MAX(Sales[MSRP]))
+				)
+

@@ -1,0 +1,259 @@
+table Sales
+	lineageTag: f6595bbb-9e26-44de-b1d3-ab21d827051a
+
+	measure 'Total Sales' = SUM(Sales[SALES])
+		formatString: $#,##0
+		displayFolder: Key Measures
+		lineageTag: 7b75d052-fbc1-4fd7-a5a9-5b929d0c75e0
+
+	measure 'Total Quantity Sold' = SUM(Sales[QUANTITYORDERED])
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: ca6919a4-d341-4a37-9b22-c074cf691d81
+
+	measure 'Total Orders' = DISTINCTCOUNT(Sales[ORDERNUMBER])
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: 0ad25b7a-52af-4921-aa3f-13f19f82c224
+
+	measure 'Total Customers' = COUNTROWS(Customer)
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: 56a72a75-d607-43b1-aa9d-2e372081cc25
+
+	measure 'Total Products Sold' = COUNTROWS(Product)
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: ca5685c6-496f-49f5-b786-5b7046dca543
+
+	measure 'Average Order Value' = DIVIDE([Total Sales], [Total Orders])
+		formatString: $#,##0.00
+		displayFolder: Key Measures
+		lineageTag: 99a7fde5-53f6-49e3-943b-f40bca533cf0
+
+	measure 'Average Selling Price' = AVERAGE(Sales[PRICEEACH])
+		formatString: $#,##0.00
+		displayFolder: Key Measures
+		lineageTag: e80942c7-94ef-4349-b393-844345538c00
+
+	measure '% of Total Sales' = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Sales)))
+		formatString: 0.0%
+		displayFolder: Key Measures
+		lineageTag: e2a7940d-f104-404a-b24f-b52f049feef2
+
+	/// Potential revenue at manufacturer list price (MSRP x quantity). Dataset has no cost data, so this is used as a proxy for margin analysis, not true profit.
+	measure 'Total MSRP Value' = SUMX(Sales, Sales[QUANTITYORDERED] * Sales[MSRP])
+		formatString: $#,##0
+		displayFolder: Margin (MSRP-based)
+		lineageTag: 410bd669-0bf5-4c2e-842f-54ca745f756a
+
+	/// Amount actual sales fell short of MSRP list-price value. Not true profit (no cost data in source).
+	measure 'Discount vs MSRP' = [Total MSRP Value] - [Total Sales]
+		formatString: $#,##0
+		displayFolder: Margin (MSRP-based)
+		lineageTag: 4c9ebeee-8d9a-49ab-a816-ba4db7ea57ba
+
+	measure 'Discount % vs MSRP' = DIVIDE([Discount vs MSRP], [Total MSRP Value])
+		formatString: 0.0%
+		displayFolder: Margin (MSRP-based)
+		lineageTag: 46f75914-3a84-4371-a0e6-200056b8224e
+
+	measure 'Sales PY' = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Calendar[Date]))
+		formatString: $#,##0
+		displayFolder: Time Intelligence
+		lineageTag: 7f10ac32-ee77-48da-aa22-0ad69ef63893
+
+	measure 'Sales YoY %' = DIVIDE([Total Sales] - [Sales PY], [Sales PY])
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: cc8e0d7b-9894-4587-b188-c2c09394929e
+
+	measure 'Sales YTD' = TOTALYTD([Total Sales], Calendar[Date])
+		formatString: $#,##0
+		displayFolder: Time Intelligence
+		lineageTag: 3d6c2af8-f4a2-4ed9-af06-20538a6b8f1f
+
+	measure 'Sales QTD' = TOTALQTD([Total Sales], Calendar[Date])
+		formatString: $#,##0
+		displayFolder: Time Intelligence
+		lineageTag: 2f7f02dd-fcf5-4c83-87a7-8d224a90a7ba
+
+	measure 'Sales MTD' = TOTALMTD([Total Sales], Calendar[Date])
+		formatString: $#,##0
+		displayFolder: Time Intelligence
+		lineageTag: 0b13fa30-e5f5-4a93-b5d8-b8adfefd023b
+
+	measure 'Sales - Large Deals' = CALCULATE([Total Sales], Sales[DEALSIZE] = "Large")
+		formatString: $#,##0
+		displayFolder: Deal Size
+		lineageTag: 8df8d568-ce47-4d25-9cf3-e89db54b318a
+
+	measure 'Sales - Medium Deals' = CALCULATE([Total Sales], Sales[DEALSIZE] = "Medium")
+		formatString: $#,##0
+		displayFolder: Deal Size
+		lineageTag: ce9c4bf3-253d-4071-be35-264959a4bb3d
+
+	measure 'Sales - Small Deals' = CALCULATE([Total Sales], Sales[DEALSIZE] = "Small")
+		formatString: $#,##0
+		displayFolder: Deal Size
+		lineageTag: 1a7ec086-4437-4f98-b7d0-134d00f6b4e6
+
+	measure 'Distinct Product Lines' = DISTINCTCOUNT(Sales[PRODUCTLINE])
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: cd3599b7-3285-4e29-9ee1-c37e1dfad277
+
+	measure 'Distinct Countries' = DISTINCTCOUNT(Sales[COUNTRY])
+		formatString: #,##0
+		displayFolder: Key Measures
+		lineageTag: 3e37edc9-a1aa-4a27-a010-9cf513d4d3e5
+
+	column ORDERNUMBER
+		dataType: int64
+		lineageTag: c3ed449d-2056-482c-a3fa-1a77ad748c63
+		sourceColumn: ORDERNUMBER
+
+	column QUANTITYORDERED
+		dataType: int64
+		lineageTag: 8d662878-28fe-4c80-b24b-42874432023d
+		sourceColumn: QUANTITYORDERED
+
+	column PRICEEACH
+		dataType: double
+		lineageTag: 346407a4-d9b7-4ec8-9383-a52441f05e70
+		sourceColumn: PRICEEACH
+
+	column ORDERLINENUMBER
+		dataType: int64
+		lineageTag: a1fb1a62-4a01-4c16-9511-669b8cb0887b
+		sourceColumn: ORDERLINENUMBER
+
+	column SALES
+		dataType: double
+		lineageTag: 5eb2ef57-e99b-4ac0-b79d-2db49bd2653a
+		sourceColumn: SALES
+
+	column ORDERDATE
+		dataType: dateTime
+		lineageTag: 6bd12645-8605-4dce-aebd-0b3c37a78f0e
+		sourceColumn: ORDERDATE
+
+	column STATUS
+		dataType: string
+		lineageTag: 0bf5e8a7-85eb-4937-ac5a-96f046ba3c89
+		sourceColumn: STATUS
+
+	column QTR_ID
+		dataType: int64
+		lineageTag: 2629f19f-30d9-4e39-a042-1b1ec4b65af4
+		sourceColumn: QTR_ID
+
+	column MONTH_ID
+		dataType: int64
+		lineageTag: b97b5ddc-2839-433a-895a-6b6009524d2c
+		sourceColumn: MONTH_ID
+
+	column YEAR_ID
+		dataType: int64
+		lineageTag: 377ac067-fcfc-49ad-b1db-d9f4eb0d9529
+		sourceColumn: YEAR_ID
+
+	column PRODUCTLINE
+		dataType: string
+		lineageTag: 0ebb0c89-2c06-4903-ba07-794a48419e7d
+		sourceColumn: PRODUCTLINE
+
+	column MSRP
+		dataType: int64
+		lineageTag: 0a82de90-ee43-411a-a21f-f41aa0469783
+		sourceColumn: MSRP
+
+	column PRODUCTCODE
+		dataType: string
+		lineageTag: 6ac909f5-438b-48ac-aee9-494e9c955f00
+		sourceColumn: PRODUCTCODE
+
+	column CUSTOMERNAME
+		dataType: string
+		lineageTag: 5d3e80ed-1b3e-4e56-baf3-94090f1bc478
+		sourceColumn: CUSTOMERNAME
+
+	column PHONE
+		dataType: string
+		lineageTag: cb280ad4-d628-47da-9134-94ddd1993ac0
+		sourceColumn: PHONE
+
+	column ADDRESSLINE1
+		dataType: string
+		lineageTag: e766cb49-58cd-4c04-b4ee-3229a5525ec0
+		sourceColumn: ADDRESSLINE1
+
+	column ADDRESSLINE2
+		dataType: string
+		lineageTag: be1fc625-8f60-4612-8877-017100d3e56e
+		sourceColumn: ADDRESSLINE2
+
+	column CITY
+		dataType: string
+		lineageTag: 7ec1a1ad-a76f-4f04-a96e-d62da8ada72f
+		sourceColumn: CITY
+
+	column STATE
+		dataType: string
+		lineageTag: 8a4800ac-1280-4de0-9436-2da230b06f2d
+		sourceColumn: STATE
+
+	column POSTALCODE
+		dataType: string
+		lineageTag: 37645b9c-8e27-465f-aad6-9b3958652633
+		sourceColumn: POSTALCODE
+
+	column COUNTRY
+		dataType: string
+		lineageTag: 28badcd4-fd39-4308-955e-c1a4eff6ad2f
+		sourceColumn: COUNTRY
+
+	column TERRITORY
+		dataType: string
+		lineageTag: 9a1ef2fd-5ed0-4928-b6f1-0bcfe5bc4375
+		sourceColumn: TERRITORY
+
+	column CONTACTLASTNAME
+		dataType: string
+		lineageTag: c7765292-709f-4df0-b5cd-e2fa915114f0
+		sourceColumn: CONTACTLASTNAME
+
+	column CONTACTFIRSTNAME
+		dataType: string
+		lineageTag: 3ad2124d-75cc-4729-814a-f96a9aac25f7
+		sourceColumn: CONTACTFIRSTNAME
+
+	column DEALSIZE
+		dataType: string
+		lineageTag: 0e9e4efa-f795-46da-abca-862cff2d54ee
+		sourceColumn: DEALSIZE
+
+	column OrderDateOnly
+		dataType: dateTime
+		lineageTag: e26039dc-15b9-47ea-95d2-8fc74143163e
+		sourceColumn: OrderDateOnly
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Projects\powerbi-ai-dashboard\sales_data_sample.csv"),[Delimiter=",", Columns=25, Encoding=1252, QuoteStyle=QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{
+				        {"ORDERNUMBER", Int64.Type}, {"QUANTITYORDERED", Int64.Type}, {"PRICEEACH", type number},
+				        {"ORDERLINENUMBER", Int64.Type}, {"SALES", type number}, {"ORDERDATE", type datetime},
+				        {"STATUS", type text}, {"QTR_ID", Int64.Type}, {"MONTH_ID", Int64.Type}, {"YEAR_ID", Int64.Type},
+				        {"PRODUCTLINE", type text}, {"MSRP", Int64.Type}, {"PRODUCTCODE", type text}, {"CUSTOMERNAME", type text},
+				        {"PHONE", type text}, {"ADDRESSLINE1", type text}, {"ADDRESSLINE2", type text}, {"CITY", type text},
+				        {"STATE", type text}, {"POSTALCODE", type text}, {"COUNTRY", type text}, {"TERRITORY", type text},
+				        {"CONTACTLASTNAME", type text}, {"CONTACTFIRSTNAME", type text}, {"DEALSIZE", type text}
+				    }),
+				    #"Added OrderDate" = Table.AddColumn(#"Changed Type", "OrderDateOnly", each Date.From([ORDERDATE]), type date)
+				in
+				    #"Added OrderDate"
+

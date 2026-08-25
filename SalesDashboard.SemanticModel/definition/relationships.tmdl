@@ -1,0 +1,12 @@
+relationship 'Relationship 2'
+	fromColumn: Sales.OrderDateOnly
+	toColumn: Calendar.Date
+
+relationship Relationship
+	fromColumn: Sales.PRODUCTCODE
+	toColumn: Product.PRODUCTCODE
+
+relationship 'Relationship 1'
+	fromColumn: Sales.CUSTOMERNAME
+	toColumn: Customer.CUSTOMERNAME
+
